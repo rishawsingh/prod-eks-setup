@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Project name"
   type        = string
-  default     = "DevOpsDojo"
+  default     = "DevOpsProject"
 }
 
 variable "github_repositories" {
@@ -19,8 +19,8 @@ variable "github_repositories" {
   }))
   default = [
     {
-      org    = "akhileshmishrabiz"
-      repo   = "DevOpsDojo"
+      org    = "your-org-name"
+      repo   = "your-repo-name"
       branch = "*"
     }
   ]

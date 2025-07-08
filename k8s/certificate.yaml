@@ -10,4 +10,4 @@ spec:
     name: letsencrypt-dev
     kind: ClusterIssuer
   dnsNames:
-  - "akhileshmishra.tech" # replace with your domain name
+  - "your-domain.com" # replace with your domain name

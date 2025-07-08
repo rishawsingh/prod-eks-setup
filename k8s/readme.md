@@ -22,7 +22,7 @@ cd 3-tier-app-eks/
 
 ```bash
 eksctl create cluster \
-  --name Akhilesh-cluster \
+  --name rishaw-prd-cluster \
   --region eu-west-1 \
   --version 1.31 \
   --nodegroup-name standard-workers \
@@ -36,7 +36,7 @@ eksctl create cluster \
 aws eks list-clusters
 
 # Replace my-cluster with your cluster name from the list-clusters output
-export cluster_name=Akhilesh-cluster # Name of the cluster
+export cluster_name=rishaw-prd-cluster # Name of the cluster
 echo $cluster_name
 
 aws eks update-kubeconfig --name $cluster_name --region eu-west-1
@@ -51,10 +51,10 @@ kubectl config current-context
 
 ```bash
 # VPC ID associated with your cluster
-aws eks describe-cluster --name Akhilesh-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text
+aws eks describe-cluster --name rishaw-prd-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text
 
 # Get VPC ID
-VPC_ID=$(aws eks describe-cluster --name Akhilesh-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text)
+VPC_ID=$(aws eks describe-cluster --name rishaw-prd-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text)
 
 # Find private subnets (subnets without a route to an internet gateway)
 PRIVATE_SUBNET_IDS=$(aws ec2 describe-subnets \
@@ -65,8 +65,8 @@ PRIVATE_SUBNET_IDS=$(aws ec2 describe-subnets \
 
 # Create a subnet group using only private subnet
 aws rds create-db-subnet-group \
-  --db-subnet-group-name akhilesh-postgres-private-subnet-group \
-  --db-subnet-group-description "Private subnet group for Akhilesh PostgreSQL RDS" \
+  --db-subnet-group-name rishaw-postgres-private-subnet-group \
+  --db-subnet-group-description "Private subnet group for Rishaw PostgreSQL RDS" \
   --subnet-ids subnet-0115609bc602b388e	subnet-0611f6ecae28a510c	subnet-00a21441953091d88 \
   --region eu-west-1
 
@@ -86,7 +86,7 @@ SG_ID=$(aws ec2 describe-security-groups \
   --region eu-west-1)
 
 # get the SG attached with cluster nodes:
-NODE_SG=$(aws eks describe-cluster --name Akhilesh-cluster --region eu-west-1 \
+NODE_SG=$(aws eks describe-cluster --name rishaw-prd-cluster --region eu-west-1 \
   --query "cluster.resourcesVpcConfig.securityGroupIds[0]" --output text)
 
 # Allow cluster to reach rds on port 5432
@@ -99,14 +99,14 @@ aws ec2 authorize-security-group-ingress \
 
 # create the PostgreSQL RDS instance in the private subnet group
 aws rds create-db-instance \
-  --db-instance-identifier akhilesh-postgres  \
+  --db-instance-identifier rishaw-postgres  \
   --db-instance-class db.t3.small \
   --engine postgres \
   --engine-version 15 \
   --allocated-storage 20 \
   --master-username postgresadmin \
   --master-user-password YourStrongPassword123! \
-  --db-subnet-group-name akhilesh-postgres-private-subnet-group \
+  --db-subnet-group-name rishaw-postgres-private-subnet-group \
   --vpc-security-group-ids $SG_ID \
   --no-publicly-accessible \
   --backup-retention-period 7 \
@@ -133,8 +133,8 @@ DATABASE_URL: "postgresql://postgres:<strong-password>@devops-learning-db.<your-
 Replace `<strong-password>` and `<your-db-endpoint>` with your actual values.
 
 ## Step 5: Deploy the Application
-Backend image: livingdevopswithakhilesh/devopsdozo:backend-latest
-Frontend image: livingdevopswithakhilesh/devopsdozo:frontend-latest
+Backend image: shawdoesdevops/prd-eks:backend-latest
+Frontend image: shawdoesdevops/prd-eks:frontend-latest
 
 ```bash
 # Apply Kubernetes manifests
@@ -182,7 +182,7 @@ The AWS Application Load Balancer (ALB) Ingress Controller is required for the i
 ```bash
 
 # resource: https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
-export cluster_name=Akhilesh-cluster
+export cluster_name=rishaw-prd-cluster
 oidc_id=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5)
 echo $oidc_id
 # Check if IAM OIDC provider with your cluster’s issuer ID 
@@ -222,7 +222,7 @@ kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller/
 brew install helm # (for mac)
 helm repo add eks https://aws.github.io/eks-charts
 helm repo update
-VPC_ID=$(aws eks describe-cluster --name Akhilesh-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text)
+VPC_ID=$(aws eks describe-cluster --name rishaw-prd-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text)
 
 helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
@@ -245,7 +245,7 @@ kubectl get ingress -n 3-tier-app-eks
 kubectl logs -n kube-system -l app.kubernetes.io/name=aws-load-balancer-controller
 
 # VPC_ID for cluster
-VPC_ID=$(aws eks describe-cluster --name Akhilesh-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text)
+VPC_ID=$(aws eks describe-cluster --name rishaw-prd-cluster --region eu-west-1 --query "cluster.resourcesVpcConfig.vpcId" --output text)
 
 # verify the vpc id
 echo $VPC_ID
@@ -290,16 +290,16 @@ kubectl logs -n kube-system -l app.kubernetes.io/name=aws-load-balancer-controll
 ```bash
 
 aws route53 create-hosted-zone \
-  --name akhileshmishra.tech \
+  --name your-domain.com \
   --caller-reference $(date +%s) \
-  --hosted-zone-config Comment="Public hosted zone for akhileshmishra.tech"
+  --hosted-zone-config Comment="Public hosted zone for your-domain.com"
 
 # Get the ALB DNS name from the Ingress
 ALB_DNS=$(kubectl get ingress 3-tier-app-ingress -n 3-tier-app-eks -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo "ALB DNS Name: $ALB_DNS"
 
 # Get the hosted zone ID for your domain
-ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name akhileshmishra.tech --query "HostedZones[0].Id" --output text | sed 's/\/hostedzone\///')
+ZONE_ID=$(aws route53 list-hosted-zones-by-name --dns-name your-domain.com --query "HostedZones[0].Id" --output text | sed 's/\/hostedzone\///')
 echo "Hosted Zone ID: $ZONE_ID"
 
 # Create an A record alias pointing to the ALB
@@ -310,7 +310,7 @@ aws route53 change-resource-record-sets \
       {
         "Action": "UPSERT",
         "ResourceRecordSet": {
-          "Name": "app.akhileshmishra.tech",
+          "Name": "app.your-domain.com",
           "Type": "A",
           "AliasTarget": {
             "HostedZoneId": "Z32O12XQLNTSW2",

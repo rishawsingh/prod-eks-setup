@@ -28,13 +28,13 @@ spec:
         command: ['sh', '-c', 'until nslookup postgres-db.3-tier-app-eks.svc.cluster.local; do echo waiting for database; sleep 2; done;']
       containers:
       - name: backend
-        image: livingdevopswithakhilesh/devopsdozo:backend-latest
+        image: shawdoesdevops/prd-eks:backend-latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
         env:
         - name: ALLOWED_ORIGINS
-          value: "https://akhileshmishra.tech,http://akhileshmishra.tech"
+          value: "https://your-domain.com,http://your-domain.com"
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:

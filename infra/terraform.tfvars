@@ -1,11 +1,11 @@
 aws_region   = "ap-south-1"
 environment  = "dev"
-project_name = "DevOpsDojo"
+project_name = "DevOpsProject"
 
 github_repositories = [
   {
-    org    = "akhileshmishrabiz"
-    repo   = "DevOpsDojo"
+    org    = "your-org-name"
+    repo   = "your-repo-name"
     branch = "main"
   }
 ]

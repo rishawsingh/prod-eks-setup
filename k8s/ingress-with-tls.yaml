@@ -33,10 +33,10 @@ spec:
   ingressClassName: "alb"
   tls:
   - hosts:
-    - "akhileshmishra.tech"
+    - "your-domain.com"
     secretName: example-com-tls  # This must match the secretName in the Certificate resource
   rules:
-  - host: "akhileshmishra.tech"  # Replace with your actual domain
+  - host: "your-domain.com"  # Replace with your actual domain
     http:
       paths:
       - path: /api
@@ -54,7 +54,7 @@ spec:
             port:
               number: 80
   # # Optional: Add a rule for www subdomain if needed
-  # - host: "www.akhileshmishra.tech"  # Replace with your actual domain
+  # - host: "www.your-domain.com"  # Replace with your actual domain
   #   http:
   #     paths:
   #     - path: /

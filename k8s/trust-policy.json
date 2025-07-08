@@ -9,7 +9,7 @@
         "Action": "sts:AssumeRoleWithWebIdentity",
         "Condition": {
           "StringLike": {
-            "token.actions.githubusercontent.com:sub": "repo:akhileshmishrabiz/DevOpsDojo:*"
+            "token.actions.githubusercontent.com:sub": "repo:your-github:*"
           }
         }
       }

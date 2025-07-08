@@ -42,6 +42,6 @@ module "eks" {
   tags = {
     Environment = var.environment
     Terraform   = "true"
-    repo        = "DevOpsDojo"
+    repo        = "your-github-repo"
   }
 }

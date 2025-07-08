@@ -44,7 +44,7 @@ This applies the database migrations.
 Next, seed the database with initial data:
 
 ```bash
-docker-compose exec backend python seed_data.py
+docker compose exec backend python seed_data.py
 ```
 
 ---
@@ -54,7 +54,7 @@ docker-compose exec backend python seed_data.py
 To stop the application and remove the containers, run:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ---
@@ -64,8 +64,8 @@ docker-compose down
 To restart the application, first stop it (if running) and then start it again:
 
 ```bash
-docker-compose down
-docker-compose up --build
+docker compose down
+docker compose up --build
 ```
 
 ---

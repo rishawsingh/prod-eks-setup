@@ -24,7 +24,7 @@ Ensure the following tools are installed on your system before proceeding:
 Run the following command to build and start the application containers:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 This will build the Docker images and start the containers for the frontend, backend, and database.
@@ -36,7 +36,7 @@ This will build the Docker images and start the containers for the frontend, bac
 In a new terminal, initialize the database by running the following commands:
 
 ```bash
-docker-compose exec backend flask db upgrade
+docker compose exec backend flask db upgrade
 ```
 
 This applies the database migrations.
